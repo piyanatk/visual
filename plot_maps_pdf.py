@@ -10,6 +10,7 @@ from astropy.wcs import WCS
 
 
 # Read data
+stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
 root_dir = '/Users/piyanat/Google/research/pdf_paper/'
 f, z, xi = np.genfromtxt(root_dir + 'interp_delta_21cm_f_z_xi.csv',
                              delimiter=',', unpack=True)
@@ -50,7 +51,7 @@ gauss_im = imax[2].imshow(gauss_map, vmin=-1, vmax=1, origin='lower')
 res_im = imax[3].imshow(res_map, vmin=-1, vmax=1, origin='lower')
 for ax in imax:
     ax.contour(mask, 1, color='black')
-lim = wcs.wcs.crpix + (10 / wcs.wcs.cdelt)
+lim = wcs.wcs.crpix + (13 / wcs.wcs.cdelt)
 imax[0].set_xlim(*lim)
 imax[0].set_ylim(*lim)
 imax[0].set_ylabel('Declination [deg]')
@@ -106,5 +107,5 @@ for ax, lb in zip(imax, labels):
 gs0.tight_layout(fig, rect=[0, -0.01, 1, 0.98])
 gs0.update(hspace=0.22)
 fig.canvas.draw()
-fig.savefig('mwa_pdf_maps_xi05.pdf', dpi=200)
+fig.savefig(stats_dir + 'mwa_pdf_maps_xi05.pdf', dpi=200)
 plt.close()

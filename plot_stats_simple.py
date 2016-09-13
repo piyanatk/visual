@@ -1,4 +1,3 @@
-from glob import glob
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
@@ -12,14 +11,16 @@ import pandas as pd
 stats = ['var', 'skew', 'kurt']
 telescopes = ['mwa128', 'hera37', 'hera331']
 styles = ['k:', 'k--', 'k-']
-stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
+stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
 pn = pd.Panel(
-    dict(mwa128=pd.read_hdf(stats_dir + 'mwa128_fhd_stats_df_bw0.08MHz.h5'),
-         hera37=pd.read_hdf(stats_dir + 'hera37_gauss_stats_df_bw0.08MHz.h5'),
-         hera331=pd.read_hdf(stats_dir + 'hera331_gauss_stats_df_bw0.08MHz.h5'))
+    dict(mwa128=pd.read_hdf(stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz_windowing.h5'),
+         hera37=pd.read_hdf(stats_dir + 'hera37_gauss_stats_df_bw0.08MHz_windowing.h5'),
+         hera331=pd.read_hdf(stats_dir + 'hera331_gauss_stats_df_bw0.08MHz_windowing.h5'))
     )
-xi = np.genfromtxt('/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
-                   delimiter=',', usecols=(2,), unpack=True)
+xi = np.genfromtxt(
+    '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
+    delimiter=',', usecols=(2,), unpack=True
+)
 ylims = dict(var=(-0.1, 1.0), skew=(-1, 1.5), kurt=(-1, 2.5))
 ylabels = dict(var='Variance $(\sigma^2)$ [mK$^2$]',
                skew='Skewness $(m_3 / \sigma^3)$',
@@ -74,13 +75,14 @@ labels = [
     'MWA128', 'HERA37', 'HERA331',
     'MWA128 Error', 'HERA37 Error', 'HERA331 Error'
 ]
-axes[0].legend(handles=handlers, labels=labels, loc='upper left', ncol=2, fontsize='medium')
+axes[0].legend(handles=handlers, labels=labels, loc='upper left', ncol=2,
+               fontsize='medium')
 
 # Tidy up
 axes[2].set_xlabel('Frequency [MHz]')
 axes_twin[1].xaxis.set_ticklabels([])
 axes_twin[2].xaxis.set_ticklabels([])
 axes_twin[0].set_xlabel('Ionized Fraction')
-fig.tight_layout(rect=[0, 0, 1, 1])
-fig.savefig('stats_all_snapshot.pdf', dpi=200)
+fig.tight_layout(rect=[0, 0, 0.99, 0.99])
+fig.savefig(stats_dir + 'stats_raw_window.pdf', dpi=200)
 plt.close()

@@ -11,7 +11,9 @@ from matplotlib.ticker import MaxNLocator
 import pandas as pd
 
 
-xi = np.genfromtxt('/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv', delimiter=',', usecols=2, unpack=True)
+xi = np.genfromtxt(
+    '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
+    delimiter=',', usecols=(2,), unpack=True)
 
 
 def get_data(dataframe):
@@ -33,9 +35,9 @@ def plot_data(l, m, mwa_file, hera37_file, hera331_file):
     ax[l, m].fill_between(x1, y1err_min, y1err_max, color='0.85')
     ax[l, m].fill_between(x2, y2err_min, y2err_max, color='0.7')
     ax[l, m].fill_between(x3, y3err_min, y3err_max, color='0.55')
-    ax[l, m].plot(x1, y1, 'k:', linewidth=2)
-    ax[l, m].plot(x2, y2, 'k--', linewidth=2)
-    ax[l, m].plot(x3, y3, 'k-', linewidth=2)
+    ax[l, m].plot(x1, y1, 'k:', linewidth=1)
+    ax[l, m].plot(x2, y2, 'k--', linewidth=1)
+    ax[l, m].plot(x3, y3, 'k-', linewidth=1)
     ax[l, m].set_xlim(*xlims)
     ax[l, m].set_ylim(*ylims[stat])
     ax[l, m].xaxis.set_major_locator(MaxNLocator(6, prune='upper'))
@@ -70,7 +72,7 @@ def plot_data(l, m, mwa_file, hera37_file, hera331_file):
         axt[l, m].xaxis.set_ticklabels([])
 
     # Label subplot
-    ax[l, m].text(0.03, 0.8,  bw[l] + kind[m], transform=ax[l, m].transAxes,
+    ax[l, m].text(0.03, 0.8,  axlabels[l, m], transform=ax[l, m].transAxes,
                   bbox=bbox)
 
 
@@ -87,15 +89,19 @@ if __name__ == '__main__':
                    kurt='Excess Kurtosis $(m_4 / \sigma^4 - 3)$')
     xlims = (139.915, 195.235)
     ylims = dict(var=(-0.1, 1.0), skew=(-1, 1.5), kurt=(-1, 2.5))
-    bw = ['8 kHz (raw)', '2 MHz', '3 MHz', '4 MHz', '8 MHz']
-    kind = [' Window', ' Bin']
+    bandwidths = [2, 3, 4, 8]
+    axlabels = np.array(
+        [['80 kHz Window'] + ['{:d} MHz Window'.format(bw) for bw in bandwidths],
+         [''] + ['{:d} MHz Bin'.format(bw) for bw in bandwidths]],
+    ).T
+    print(axlabels.shape)
     bbox = dict(boxstyle="round", fc="none")
 
     # Legend parameters
     handlers = [
-        Line2D([], [], linestyle=':', color='black', linewidth=2),
-        Line2D([], [], linestyle='--', color='black', linewidth=2),
-        Line2D([], [], linestyle='-', color='black', linewidth=2),
+        Line2D([], [], linestyle=':', color='black', linewidth=1),
+        Line2D([], [], linestyle='--', color='black', linewidth=1),
+        Line2D([], [], linestyle='-', color='black', linewidth=1),
         Patch(color='0.85'),
         Patch(color='0.7'),
         Patch(color='0.55')
@@ -104,16 +110,22 @@ if __name__ == '__main__':
               'MWA128 Error', 'HERA37 Error', 'HERA331 Error']
 
     # Get the list of input files
-    stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
-    df_files_mwa = np.array(glob(stats_dir + 'mwa128_fhd_stats_df_bw[2,3,4,8].00MHz*.h5'))
-    df_files_mwa.shape = (nrows-1, ncols)
-    df_files_hera37 = np.array(glob(stats_dir + 'hera37_gauss_stats_df_bw[2,3,4,8].00MHz*.h5'))
-    df_files_hera37.shape = (nrows-1, ncols)
-    df_files_hera331 = np.array(glob(stats_dir + 'hera331_gauss_stats_df_bw[2,3,4,8].00MHz*.h5'))
-    df_files_hera331.shape = (nrows-1, ncols)
-    df_files_raw_mwa = stats_dir + 'mwa128_fhd_stats_df_bw0.08MHz.h5'
-    df_files_raw_hera37 = stats_dir + 'hera37_gauss_stats_df_bw0.08MHz.h5'
-    df_files_raw_hera331 = stats_dir + 'hera331_gauss_stats_df_bw0.08MHz.h5'
+    stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
+    df_files_mwa = np.array(
+        [[stats_dir + 'mwa128_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+         [stats_dir + 'mwa128_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
+    ).T
+    df_files_hera37 = np.array(
+        [[stats_dir + 'hera37_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+         [stats_dir + 'hera37_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
+    ).T
+    df_files_hera331 = np.array(
+        [[stats_dir + 'hera331_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+         [stats_dir + 'hera331_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
+    ).T
+    df_files_raw_mwa = stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz_windowing.h5'
+    df_files_raw_hera37 = stats_dir + 'hera37_gauss_stats_df_bw0.08MHz_windowing.h5'
+    df_files_raw_hera331 = stats_dir + 'hera331_gauss_stats_df_bw0.08MHz_windowing.h5'
 
     # Loop over stats and plot
     for stat in statistics:
@@ -142,7 +154,7 @@ if __name__ == '__main__':
                  verticalalignment='top')
 
         # Legend
-        plt.figlegend(handles=handlers, labels=labels, loc=(0.58, 0.82),
+        plt.figlegend(handles=handlers, labels=labels, loc=(0.526, 0.82),
                       ncol=2, fontsize='medium')
 
         # Tidy up
@@ -150,5 +162,5 @@ if __name__ == '__main__':
         fig.tight_layout(rect=[0.01, 0.01, 0.98, 0.99])
         fig.canvas.draw()
         # plt.show()
-        fig.savefig(stat + '.pdf', dpi=200)
+        fig.savefig(stats_dir + stat + '.pdf', dpi=200)
         plt.close()

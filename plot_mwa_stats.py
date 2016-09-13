@@ -9,9 +9,9 @@ import pandas as pd
 
 stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
 pn = pd.Panel(
-    dict(fhd=pd.read_hdf(stats_dir + 'mwa128_fhd_stats_df_bw0.08MHz.h5'),
-         gauss=pd.read_hdf(stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz.h5'),
-         res=pd.read_hdf(stats_dir + 'mwa128_res_stats_df_bw0.08MHz.h5'))
+    dict(fhd=pd.read_hdf(stats_dir + 'mwa128_fhd_stats_df_bw0.08MHz_windowing.h5'),
+         gauss=pd.read_hdf(stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz_windowing.h5'),
+         res=pd.read_hdf(stats_dir + 'mwa128_res_stats_df_bw0.08MHz_windowing.h5'))
 )
 
 f, z, xi = np.genfromtxt(
@@ -22,7 +22,7 @@ f, z, xi = np.genfromtxt(
 stats = ['var', 'skew', 'kurt']
 telescopes = ['fhd', 'gauss', 'res']
 styles = ['k-', 'k--', 'k:']
-ylims = dict(var=(0, 0.35), skew=(-1, 1.5), kurt=(-1, 2.5))
+ylims = dict(var=(0, 0.4), skew=(-1, 1.5), kurt=(-1, 2.5))
 ylabels = dict(var='Variance', skew='Skewness', kurt='Kurtosis')
 
 fig, axes = plt.subplots(nrows=3, sharex=False, sharey=False,
@@ -62,8 +62,10 @@ for stat, ax in zip(stats, axes.ravel()):
 
     # Print correlation coefficient
     corr_coef = pn['fhd'][stat].corr(pn['gauss'][stat])
-    text = '$r_{{FHD\,Gaussian}}$ = {:.3f}'.format(corr_coef)
+    text = 'PCC = {:.3f}'.format(corr_coef)
     ax.text(0.02, 0.85, text, transform=ax.transAxes)
+
+    # Print soem 
 
 # Legend
 handlers = [
@@ -71,7 +73,7 @@ handlers = [
     Line2D([], [], linestyle='--', color='black'),
     Line2D([], [], linestyle=':', color='black'),
 ]
-labels = ['FHD', 'Gaussian', 'FHD-Gaussian']
+labels = ['FHD', 'Gaussian', 'Residual']
 axes[0].legend(handles=handlers, labels=labels, loc=(0.02, 0.25),
                fontsize='medium')
 
@@ -81,5 +83,5 @@ axes_twin[1].xaxis.set_ticklabels([])
 axes_twin[2].xaxis.set_ticklabels([])
 axes_twin[0].set_xlabel('Ionized Fraction')
 fig.tight_layout(rect=[-0.02, 0, 1, 1])
-fig.savefig('stats_mwa_snapshots.pdf', dpi=200)
+fig.savefig(stats_dir + 'stats_mwa.pdf', dpi=200)
 plt.close()

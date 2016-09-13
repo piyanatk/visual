@@ -31,13 +31,11 @@ def cal_snr(df, stat):
     return snr
 
 
-stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
+stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
 stats = ['skew', 'kurt']
-telescopes = ['mwa128', 'hera37', 'hera331']
-prefixes = dict(mwa128='mwa128_fhd', hera37='hera37_gauss',
-                hera331='hera331_gauss')
-suffixes = ['', '_average']
-types = ['windowing', 'binning']
+telescopes = ['mwa128', 'hera37', 'hera61', 'hera91', 'hera127', 'hera169',
+              'hera217', 'hera271', 'hera331']
+suffixes = ['windowing', 'binning']
 freqs = MWA_FREQ_EOR_ALL_80KHZ
 bandwidths = np.arange(1, 16)
 linewidths = [1, 1, 1, 1]
@@ -56,7 +54,6 @@ nrows = 2
 ncols = 2
 
 for t in telescopes:
-    p = prefixes[t]
     gs0 = GridSpec(1, 2, width_ratios=[1, 0.02])
     gs = GridSpecFromSubplotSpec(2, 2, subplot_spec=gs0[0], wspace=0.05, hspace=0.05)
     fig = plt.figure()
@@ -68,14 +65,18 @@ for t in telescopes:
     cax = fig.add_subplot(gs0[1])
 
     for j in range(ncols):
-        df = [pd.read_hdf(stats_dir + '{:s}_stats_df_bw{:.02f}MHz{:s}.h5'
-                          .format(p, bw, suffixes[j])) for bw in bandwidths]
+        df = [pd.read_hdf(stats_dir + '{:s}_gauss_stats_df_bw{:.02f}MHz_{:s}.h5'
+                          .format(t, bw, suffixes[j])) for bw in bandwidths]
         for i in range(nrows):
             snr = cal_snr(df, stats[i])
             # print(snr.shape, x.size, y.size)
+            # vmin = vlim[t][0]
+            # vmax = vlim[t][1]
+            vmin = 1e-4
+            vmax = 1e4
             im = ax[i, j].pcolormesh(
                 x, y, snr.T,
-                norm=MidpointLogNorm(vmin=vlim[t][0], vmax=vlim[t][1], midpoint=1),
+                norm=MidpointLogNorm(vmin=vmin, vmax=vmax, midpoint=1),
                 edgecolors='face', cmap='bwr'
             )
             ax[i, j].set_xlim(x[0], x[-1])
@@ -102,4 +103,4 @@ for t in telescopes:
 
     gs0.tight_layout(fig, rect=[0, 0, 1, 1])
     fig.canvas.draw()
-    fig.savefig('snr_color_chart_{:s}.pdf'.format(t), dpi=200)
+    fig.savefig(stats_dir + 'snr_color_chart_{:s}.pdf'.format(t), dpi=200)

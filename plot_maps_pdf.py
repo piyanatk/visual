@@ -12,19 +12,24 @@ from astropy.wcs import WCS
 # Read data
 pdf_dir = '/data3/piyanat/runs/post_uvlt50_I_intnorm/pdf/'
 maps_dir = '/data3/piyanat/runs/post_uvlt50_I_intnorm/maps/'
-freqs, z, xi, ang = np.genfromtxt(
+freqs, redshift, ionfrac, ang = np.genfromtxt(
     '/data3/piyanat/runs/shared/interp_delta_21cm_f_z_xi_angpix.csv',
     delimiter=',', unpack=True
 )
 
-model_pdf = pd.read_hdf(pdf_dir + 'model_sine_pdf_bw0.08MHz_windowing.h5', 'pdf')
+model_pdf = pd.read_hdf(pdf_dir + 'model_sine_pdf_bw0.08MHz_windowing.h5',
+                        'pdf')
 fhd_pdf = pd.read_hdf(pdf_dir + 'mwa128_fhd_pdf_bw0.08MHz_windowing.h5', 'pdf')
-gauss_pdf = pd.read_hdf(pdf_dir + 'mwa128_gauss_pdf_bw0.08MHz_windowing.h5', 'pdf')
+gauss_pdf = pd.read_hdf(pdf_dir + 'mwa128_gauss_pdf_bw0.08MHz_windowing.h5',
+                        'pdf')
 res_pdf = pd.read_hdf(pdf_dir + 'mwa128_res_pdf_bw0.08MHz_windowing.h5', 'pdf')
 
 pdf_dict = dict(model=model_pdf, fhd=fhd_pdf, gauss=gauss_pdf, res=res_pdf)
 
-for f in freqs:
+for i in range(freqs.size):
+    f = freqs[i]
+    z = redshift[i]
+    xi = ionfrac[i]
     model_map = fits.getdata(
         maps_dir + 'model/model_0.000h_{:.3f}MHz.fits'.format(f)
     )
@@ -47,9 +52,10 @@ for f in freqs:
 
     # Init fig
     gs0 = GridSpec(2, 1, hspace=0.3, wspace=0)
-    gs1 = GridSpecFromSubplotSpec(2, 5, height_ratios=(0.05, 1),
-                                  width_ratios=(1, 0.1, 1, 1, 1), wspace=0, hspace=0,
-                                  subplot_spec=gs0[1])
+    gs1 = GridSpecFromSubplotSpec(
+        2, 5, height_ratios=(0.05, 1), width_ratios=(1, 0.1, 1, 1, 1),
+        wspace=0, hspace=0, subplot_spec=gs0[1]
+    )
     gs2 = GridSpecFromSubplotSpec(1, 1, subplot_spec=gs0[0])
     fig = plt.figure(figsize=(10, 6))
     imax = list()
@@ -109,12 +115,14 @@ for f in freqs:
     pax.set_ylabel('$dP/dT_b$')
     # pax.xaxis.set_major_locator(MaxNLocator(8))
     pax.legend(loc='upper right')
-    pax.text(0.05, 0.9, '$x_i=0.5$\n$z=0.979$\n$\\nu=158.195\\,MHz$',
-             verticalalignment='top', horizontalalignment='left',
-             transform=pax.transAxes)
+    pax.text(0.05, 0.9, '$x_i={:.3f}$\n$z={:.3f}$\n$\\nu={:.3f}\\,MHz$'
+             .format(xi, z, f), verticalalignment='top',
+             horizontalalignment='left', transform=pax.transAxes)
     pax.xaxis.set_major_locator(FixedLocator([-10, -1, 0, 1, 10]))
-    minor_locs = np.hstack((range(-15, -10), range(-9, -1), np.arange(-0.9, 0, 0.1),
-                            np.arange(0.1, 1.0, 0.1), range(2, 10), range(11, 16)))
+    minor_locs = np.hstack(
+        (range(-15, -10), range(-9, -1), np.arange(-0.9, 0, 0.1),
+         np.arange(0.1, 1.0, 0.1), range(2, 10), range(11, 16))
+    )
     pax.xaxis.set_minor_locator(FixedLocator(minor_locs))
 
     # Label images

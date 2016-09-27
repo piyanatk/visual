@@ -13,7 +13,7 @@ from astropy.wcs import WCS
 pdf_dir = '/data3/piyanat/runs/post_uvlt50_I_intnorm/pdf/'
 maps_dir = '/data3/piyanat/runs/post_uvlt50_I_intnorm/maps/'
 freqs, z, xi = np.genfromtxt(
-    '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
+    '/data3/piyanat/runs/shared/interp_delta_21cm_f_z_xi.csv',
     delimiter=',', unpack=True
 )
 

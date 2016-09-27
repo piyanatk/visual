@@ -41,7 +41,7 @@ for f in freqs:
         maps_dir + 'mwa128/mask/mwa128_mask_0.000h_{:.3f}MHz.fits'.format(f)
     ).astype(bool)
     hdr = fits.getheader(
-        maps_dir + 'maps/model_0.000h_{:.3f}MHz.fits'.format(f)
+        maps_dir + 'model/model_0.000h_{:.3f}MHz.fits'.format(f)
     )
     wcs = WCS(hdr)
 

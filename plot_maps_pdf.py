@@ -136,6 +136,6 @@ for i in range(freqs.size):
     gs0.tight_layout(fig, rect=[0, -0.01, 1, 0.98])
     gs0.update(hspace=0.22)
     fig.canvas.draw()
-    fig.savefig(pdf_dir + 'mwa128_pdf maps_xi{:.3f}_{:.3f}MHz.pdf'
+    fig.savefig(pdf_dir + 'mwa128_pdf_maps_xi{:.3f}_{:.3f}MHz.pdf'
                 .format(xi, f), dpi=200)
     plt.close()

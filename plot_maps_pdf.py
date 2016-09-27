@@ -107,7 +107,7 @@ for i in range(freqs.size):
     linestyles = ['y-', 'b-', 'g--', 'r:', ]
     labels = ['Model', 'FHD', 'Gaussian', 'Residual']
     for k, ls, lb in zip(keys, linestyles, labels):
-        x, y = pdf_dict[k]['{:.3f}'.format(f)].T.values
+        y, x = pdf_dict[k]['{:.3f}'.format(f)].T.values
         pax.plot(x, y, ls, label=lb)
     pax.set_xscale('symlog', linthreshx=1)
     pax.set_xlim(-15, 10)

@@ -21,10 +21,11 @@ xi = np.genfromtxt(
     '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
     delimiter=',', usecols=(2,), unpack=True
 )
-ylims = dict(var=(-0.1, 1.0), skew=(-1, 1.5), kurt=(-1, 2.5))
-ylabels = dict(var='Variance $(\sigma^2)$ [mK$^2$]',
-               skew='Skewness $(m_3 / \sigma^3)$',
-               kurt='Excess Kurtosis $(m_4 / \sigma^4 - 3)$')
+ylims = dict(var=(-0.1, 0.9), skew=(-1, 1.5), kurt=(-1, 2.5))
+nticks = dict(var=6, skew=6, kurt=7)
+ylabels = dict(var='Variance ($S_2$) [mK$^2$]',
+               skew='Skewness ($S_3$)',
+               kurt='Kurtosis ($S_4$)')
 
 fig, axes = plt.subplots(nrows=3, sharex=False, sharey=False,
                          gridspec_kw=dict(hspace=0),
@@ -43,9 +44,10 @@ for stat, ax in zip(stats, axes.ravel()):
     ax.set_xlim(x[0], x[-1])
     ax.set_ylim(ylims[stat])
     ax.set_ylabel(ylabels[stat])
+    ax.get_yaxis().set_label_coords(-0.07, 0.5)
     # ax.xaxis.set_major_locator(MaxNLocator(nbins=6, prune='upper'))
     # nlocators = (abs(ylims[stat][0]) + abs(ylims[stat][1])) / 0.5
-    ax.yaxis.set_major_locator(MaxNLocator(nbins=5, prune='upper'))
+    ax.yaxis.set_major_locator(MaxNLocator(nbins=nticks[stat], prune='upper'))
 
     ax.spines['top'].set_visible(False)
     ax.xaxis.set_ticks_position('bottom')
@@ -72,11 +74,11 @@ handlers = [
     Patch(color=colors[2])
 ]
 labels = [
-    'MWA128', 'HERA37', 'HERA331',
-    'MWA128 Error', 'HERA37 Error', 'HERA331 Error'
+    'MWA Phase I Core', 'HERA37', 'HERA331',
+    'MWA Phase I Core Error', 'HERA37 Error', 'HERA331 Error'
 ]
-axes[0].legend(handles=handlers, labels=labels, loc='upper left', ncol=2,
-               fontsize='medium')
+axes[0].legend(handles=handlers, labels=labels, loc='upper left', ncol=1,
+               fontsize='smaller')
 
 # Tidy up
 axes[2].set_xlabel('Frequency [MHz]')
@@ -84,5 +86,5 @@ axes_twin[1].xaxis.set_ticklabels([])
 axes_twin[2].xaxis.set_ticklabels([])
 axes_twin[0].set_xlabel('Ionized Fraction')
 fig.tight_layout(rect=[0, 0, 0.99, 0.99])
-fig.savefig(stats_dir + 'stats_raw_window.pdf', dpi=200)
+fig.savefig(stats_dir + 'stats_thermal.pdf', dpi=200)
 plt.close()

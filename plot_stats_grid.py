@@ -41,7 +41,7 @@ def plot_data(l, m, mwa_file, hera37_file, hera331_file):
     ax[l, m].set_xlim(*xlims)
     ax[l, m].set_ylim(*ylims[stat])
     ax[l, m].xaxis.set_major_locator(MaxNLocator(6, prune='upper'))
-    ax[l, m].yaxis.set_major_locator(MaxNLocator(5, prune='upper'))
+    ax[l, m].yaxis.set_major_locator(MaxNLocator(nticks[stat], prune='upper'))
     ax[l, m].spines['top'].set_visible(False)
     ax[l, m].xaxis.set_ticks_position('bottom')
     ax[l, m].yaxis.set_ticks_position('both')
@@ -72,7 +72,7 @@ def plot_data(l, m, mwa_file, hera37_file, hera331_file):
         axt[l, m].xaxis.set_ticklabels([])
 
     # Label subplot
-    ax[l, m].text(0.03, 0.8,  axlabels[l, m], transform=ax[l, m].transAxes,
+    ax[l, m].text(0.04, 0.8,  axlabels[l, m], transform=ax[l, m].transAxes,
                   bbox=bbox)
 
 
@@ -84,11 +84,12 @@ if __name__ == '__main__':
 
     # Plots and labels parameters
     statistics = ['var', 'skew', 'kurt']
-    ylabels = dict(var='Variance $(\sigma^2)$ [mK$^2$]',
-                   skew='Skewness $(m_3 / \sigma^3)$',
-                   kurt='Excess Kurtosis $(m_4 / \sigma^4 - 3)$')
+    ylabels = dict(var='Variance ($S_2$) [mK$^2$]',
+                   skew='Skewness ($S_3$)',
+                   kurt='Kurtosis ($S_4$)')
     xlims = (139.915, 195.235)
-    ylims = dict(var=(-0.1, 1.0), skew=(-1, 1.5), kurt=(-1, 2.5))
+    ylims = dict(var=(-0.1, 0.9), skew=(-1, 1.5), kurt=(-1, 2.5))
+    nticks = dict(var=6, skew=6, kurt=7)
     bandwidths = [2, 3, 4, 8]
     axlabels = np.array(
         [['80 kHz Window'] + ['{:d} MHz Window'.format(bw) for bw in bandwidths],
@@ -96,18 +97,6 @@ if __name__ == '__main__':
     ).T
     print(axlabels.shape)
     bbox = dict(boxstyle="round", fc="none")
-
-    # Legend parameters
-    handlers = [
-        Line2D([], [], linestyle=':', color='black', linewidth=1),
-        Line2D([], [], linestyle='--', color='black', linewidth=1),
-        Line2D([], [], linestyle='-', color='black', linewidth=1),
-        Patch(color='0.85'),
-        Patch(color='0.7'),
-        Patch(color='0.55')
-    ]
-    labels = ['MWA128', 'HERA37', 'HERA331',
-              'MWA128 Error', 'HERA37 Error', 'HERA331 Error']
 
     # Get the list of input files
     stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
@@ -154,13 +143,24 @@ if __name__ == '__main__':
                  verticalalignment='top')
 
         # Legend
-        plt.figlegend(handles=handlers, labels=labels, loc=(0.526, 0.82),
-                      ncol=2, fontsize='medium')
+        # Legend parameters
+        handlers = [
+            Line2D([], [], linestyle=':', color='black', linewidth=1),
+            Line2D([], [], linestyle='--', color='black', linewidth=1),
+            Line2D([], [], linestyle='-', color='black', linewidth=1),
+            Patch(color='0.85'),
+            Patch(color='0.7'),
+            Patch(color='0.55')
+        ]
+        labels = ['MWA Phase I Core', 'HERA37', 'HERA331',
+                  'MWA Phase I Core Error', 'HERA37 Error', 'HERA331 Error']
+
+        plt.figlegend(handles=handlers, labels=labels, loc=(0.6, 0.8),
+                      ncol=1, fontsize='medium')
 
         # Tidy up
-        # fig.tight_layout(rect=[0, 0, 1, 0.94])
-        fig.tight_layout(rect=[0.01, 0.01, 0.98, 0.99])
+        gs.tight_layout(fig, rect=[0.02, 0.02, 0.99, 0.98])
+        gs.update(wspace=0, hspace=0)
         fig.canvas.draw()
-        # plt.show()
         fig.savefig(stats_dir + stat + '.pdf', dpi=200)
         plt.close()

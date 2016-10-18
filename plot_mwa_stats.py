@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
+stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
 pn = pd.Panel(
     dict(fhd=pd.read_hdf(stats_dir + 'mwa128_fhd_stats_df_bw0.08MHz_windowing.h5'),
          gauss=pd.read_hdf(stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz_windowing.h5'),
@@ -22,12 +22,16 @@ f, z, xi = np.genfromtxt(
 stats = ['var', 'skew', 'kurt']
 telescopes = ['fhd', 'gauss', 'res']
 styles = ['k-', 'k--', 'k:']
-ylims = dict(var=(0, 0.4), skew=(-1, 1.5), kurt=(-1, 2.5))
-ylabels = dict(var='Variance', skew='Skewness', kurt='Kurtosis')
+ylims = dict(var=(0.0, 0.4), skew=(-1.0, 1.0), kurt=(-0.5, 1.5))
+nticks = dict(var=8, skew=8, kurt=8)
+# ylabels = dict(var='Variance [mK$^2$]', skew='Skewness', kurt='Kurtosis')
+ylabels = dict(var='Variance ($S_2$) [mK$^2$]',
+               skew='Skewness ($S_3$)',
+               kurt='Kurtosis ($S_4$)')
 
 fig, axes = plt.subplots(nrows=3, sharex=False, sharey=False,
                          gridspec_kw=dict(hspace=0),
-                         figsize=(8, 6))
+                         figsize=(8, 8))
 axes_twin = []
 colors = ['0.85', '0.70', '0.55']
 for stat, ax in zip(stats, axes.ravel()):
@@ -42,8 +46,9 @@ for stat, ax in zip(stats, axes.ravel()):
     ax.set_xlim(x[0], x[-1])
     ax.set_ylim(ylims[stat])
     ax.set_ylabel(ylabels[stat])
-    ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-    ax.yaxis.set_major_locator(MaxNLocator(nbins=5, prune='upper'))
+    ax.get_yaxis().set_label_coords(-0.09, 0.5)
+    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+    ax.yaxis.set_major_locator(MaxNLocator(nbins=nticks[stat], prune='upper'))
 
     ax.spines['top'].set_visible(False)
     ax.xaxis.set_ticks_position('bottom')
@@ -63,7 +68,7 @@ for stat, ax in zip(stats, axes.ravel()):
     # Print correlation coefficient
     corr_coef = pn['fhd'][stat].corr(pn['gauss'][stat])
     text = 'PCC = {:.3f}'.format(corr_coef)
-    ax.text(0.02, 0.85, text, transform=ax.transAxes)
+    ax.text(0.02, 0.9, text, transform=ax.transAxes)
 
     # Print soem 
 
@@ -74,14 +79,14 @@ handlers = [
     Line2D([], [], linestyle=':', color='black'),
 ]
 labels = ['FHD', 'Gaussian', 'Residual']
-axes[0].legend(handles=handlers, labels=labels, loc=(0.02, 0.25),
-               fontsize='medium')
+axes[0].legend(handles=handlers, labels=labels, loc=(0.02, 0.5),
+               fontsize='medium', bbox_transform=axes[0].transAxes)
 
 # Tidy up
 axes[2].set_xlabel('Frequency [MHz]')
 axes_twin[1].xaxis.set_ticklabels([])
 axes_twin[2].xaxis.set_ticklabels([])
 axes_twin[0].set_xlabel('Ionized Fraction')
-fig.tight_layout(rect=[-0.02, 0, 1, 1])
+fig.tight_layout(rect=[0, 0, 0.99, 0.99])
 fig.savefig(stats_dir + 'stats_mwa.pdf', dpi=200)
 plt.close()

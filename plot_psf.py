@@ -35,10 +35,10 @@ if __name__ == '__main__':
     #     y1 = psf1[3740, :] / psf1.max()
     #     y2 = psf2[3740, :] / psf2.max()
     # else:
-    x, y1, y2 = np.genfromtxt('/Users/piyanat/Google/research/pdf_paper/psf.csv',
+    x, y1, y2 = np.genfromtxt('/Users/piyanat/Google/research/pdf_paper/psf/psf.csv',
                               delimiter=',', unpack=True)
     amp, mean, std = np.genfromtxt(
-        '/Users/piyanat/Google/research/pdf_paper/psf_fit_params_195.235MHz.csv',
+        '/Users/piyanat/Google/research/pdf_paper/psf/psf_fit_params_195.235MHz.csv',
         delimiter=','
     )
 
@@ -69,7 +69,7 @@ if __name__ == '__main__':
                 Line2D([], [], linestyle=':', color='black'),
                 Line2D([], [], linestyle='-', color='k', linewidth=0.5,
                        marker='s', markerfacecolor='none')]
-    labels = ['Full UV', '$UV<0.5\lambda$', 'Fit $UV<0.5\lambda$']
+    labels = ['MWA Phase I\n(all baselines)', 'MWA Phase I Core\n(baseline < 100 m)', 'Gaussian Fitted\nMWA Phase I Core']
     ax.legend(handlers, labels, loc='best')
     ax.set_xlabel('Radial Distance [Degree]')
     ax.set_ylabel('Relative Intensity')

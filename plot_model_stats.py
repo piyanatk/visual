@@ -13,7 +13,7 @@ freqs, zi, xi = np.genfromtxt(
 
 if __name__ == '__main__':
     # Data parameters
-    stats_dir = '/Users/piyanat/research/pdf_paper/stats/'
+    stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
     df = pd.read_hdf(stats_dir + 'model_interp_l128_stats_df.h5')
 
     # Init figure
@@ -63,7 +63,8 @@ if __name__ == '__main__':
         Line2D([], [], linestyle='-.', color='black', linewidth=2),
         Line2D([], [], linestyle=':', color='black', linewidth=2),
     ]
-    labels = ['Ionized Fraction', 'Variance', 'Skewness', 'Kurtosis']
+    labels = ['Ionized Fraction', 'Variance ($S_2$) [mK$^2$]',
+              'Skewness ($S_3$)', 'Kurtosis ($S_4$)']
     ax.legend(handles=handlers, labels=labels, loc=(0.25, 0.5),
               fontsize='medium')
 
@@ -71,4 +72,4 @@ if __name__ == '__main__':
     plt.tight_layout()
     fig.canvas.draw()
     # plt.grid('on')
-    fig.savefig('model_stats_l128.pdf', dpi=200)
+    fig.savefig(stats_dir + 'model_stats.pdf', dpi=200)

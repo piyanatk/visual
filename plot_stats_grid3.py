@@ -22,11 +22,14 @@ def get_data(infile, stat):
 
 if __name__ == '__main__':
     # Figure parameters
-    figsize = (24, 10)
+    figsize = (15, 9.5)
     frequencies = ['145.115', '178.555']
     telescopes = ['hera37', 'hera61', 'hera91', 'hera127',
                   'hera169', 'hera217', 'hera271', 'hera331']
-    nrows = len(frequencies) + 1
+    telescopes = ['hera37', 'hera91', 'hera127', 'hera217', 'hera331']
+
+    ngroups = 2
+    nrows = len(frequencies)
     ncols = len(telescopes)
     # Read files
     mapsdir = '/Users/piyanat/Google/research/pdf_paper/maps'
@@ -38,8 +41,8 @@ if __name__ == '__main__':
         ['{:s}/{:s}_mask_0.000h_bw3.00MHz_{:s}MHz.fits'
          .format(mapsdir, t, f) for f in frequencies for t in telescopes]
     )
-    mapfiles.shape = (nrows-1, ncols)
-    maskfiles.shape = (nrows-1, ncols)
+    mapfiles.shape = (nrows, ncols)
+    maskfiles.shape = (nrows, ncols)
     # Stat files
     statsdir = '/Users/piyanat/Google/research/pdf_paper/new_stats'
     df_files_window = np.array(
@@ -64,10 +67,10 @@ if __name__ == '__main__':
     gs0 = GridSpec(nrows=2, ncols=1, height_ratios=(1, 2))
     gs1 = GridSpecFromSubplotSpec(nrows=1, ncols=ncols,
                                   wspace=0.05, hspace=0, subplot_spec=gs0[0])
-    gs2 = GridSpecFromSubplotSpec(nrows=nrows-1, ncols=ncols,
+    gs2 = GridSpecFromSubplotSpec(nrows=nrows, ncols=ncols,
                                   wspace=0.05, hspace=0, subplot_spec=gs0[1])
     fig = plt.figure(figsize=figsize)
-    ax = np.empty((nrows, ncols), dtype=object)
+    ax = np.empty((5, ncols), dtype=object)
 
     # Plot stats
     for j in range(ncols):
@@ -86,7 +89,7 @@ if __name__ == '__main__':
             ax[0, j].yaxis.set_ticklabels([])
 
     # Plot images
-    for i in range(1, nrows):
+    for i in range(1, 3):
         for j in range(ncols):
             ax[i, j] = fig.add_subplot(gs2[i-1, j], projection=wcs)
             im = ax[i, j].imshow(fits.getdata(mapfiles[i-1, j]),
@@ -99,7 +102,7 @@ if __name__ == '__main__':
                 ax[i, j].coords[0].set_ticklabel_visible(False)
             if j != 0:
                 ax[i, j].coords[1].set_ticklabel_visible(False)
-            if i == nrows-1:
+            if i == nrows:
                 ax[i, j].set_xlabel(telescopes[j].upper())
             if j == 0:
                 ax[i, j].set_ylabel(frequencies[i-1] + ' MHz')
@@ -108,16 +111,16 @@ if __name__ == '__main__':
                        transform=ax[i, j].get_transform('fk5'))
             ax[i, j].add_patch(c)
 
-    gs0.tight_layout(fig, rect=[0.015, 0.05, 0.95, 0.97])
-    gs0.update(hspace=0.15)
+    gs0.tight_layout(fig, rect=[0.025, 0.05, 0.95, 0.97])
+    gs0.update(hspace=0.1)
 
     # fig.suptitle('3 MHz Bin Maps')
     fig.text(0.46, 0.01, 'Right Ascension [deg]')
     fig.text(0.46, 0.63, 'Frequency [MHz]')
     fig.text(0.005, 0.4, 'Declination [deg]', rotation='vertical')
-    fig.text(0.005, 0.8, 'Kurtosis', rotation='vertical')
+    fig.text(0.005, 0.87, 'Kurtosis ($S_4$)', rotation='vertical')
 
-    cbar_ax = fig.add_axes([0.95, 0.1, 0.01, 0.5])
+    cbar_ax = fig.add_axes([0.94, 0.1, 0.01, 0.5])
     cbar = fig.colorbar(im, cax=cbar_ax, orientation='vertical')
     cbar.set_label('Brightness Temperature [mK]')
 
@@ -131,4 +134,4 @@ if __name__ == '__main__':
     fig.legend(handles=handlers, labels=labels,
                loc='upper center', ncol=4)
     # plt.show()
-    fig.savefig('heraXX_stats_maps_bin3MHz_145.115MHz_178.555MHz.pdf')
+    fig.savefig(statsdir + '/heraXX_kurt_maps_bin3MHz.pdf')

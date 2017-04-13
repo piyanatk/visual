@@ -12,7 +12,8 @@ import pandas as pd
 
 
 xi = np.genfromtxt(
-    '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
+    '/Users/piyanat/research/project/instrument_systematic_on_1pt_stats/'
+    'interp_delta_21cm_f_z_xi.csv',
     delimiter=',', usecols=(2,), unpack=True)
 
 
@@ -90,26 +91,27 @@ if __name__ == '__main__':
     xlims = (139.915, 195.235)
     ylims = dict(var=(-0.1, 0.9), skew=(-1, 1.5), kurt=(-1, 2.5))
     nticks = dict(var=6, skew=6, kurt=7)
-    bandwidths = [2, 3, 4, 8]
+    # bandwidths = [2, 3, 4, 8]
+    bandwidths = [2, 3, 2, 3]
     axlabels = np.array(
-        [['80 kHz Window'] + ['{:d} MHz Window'.format(bw) for bw in bandwidths],
+        [['80 kHz Window'] + ['{:d} MHz Bin'.format(bw) for bw in bandwidths],
          [''] + ['{:d} MHz Bin'.format(bw) for bw in bandwidths]],
     ).T
     print(axlabels.shape)
     bbox = dict(boxstyle="round", fc="none")
 
     # Get the list of input files
-    stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
+    stats_dir = '/Users/piyanat/research/project/instrument_systematic_on_1pt_stats/new_stats/'
     df_files_mwa = np.array(
-        [[stats_dir + 'mwa128_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+        [[stats_dir + 'mwa128_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths],
          [stats_dir + 'mwa128_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
     ).T
     df_files_hera37 = np.array(
-        [[stats_dir + 'hera37_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+        [[stats_dir + 'hera37_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths],
          [stats_dir + 'hera37_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
     ).T
     df_files_hera331 = np.array(
-        [[stats_dir + 'hera331_gauss_stats_df_bw{:.2f}MHz_windowing.h5'.format(bw) for bw in bandwidths],
+        [[stats_dir + 'hera331_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths],
          [stats_dir + 'hera331_gauss_stats_df_bw{:.2f}MHz_binning.h5'.format(bw) for bw in bandwidths]]
     ).T
     df_files_raw_mwa = stats_dir + 'mwa128_gauss_stats_df_bw0.08MHz_windowing.h5'
@@ -162,5 +164,5 @@ if __name__ == '__main__':
         gs.tight_layout(fig, rect=[0.02, 0.02, 0.99, 0.98])
         gs.update(wspace=0, hspace=0)
         fig.canvas.draw()
-        fig.savefig(stats_dir + stat + '.pdf', dpi=200)
+        fig.savefig(stats_dir + stat + '_poster.pdf', dpi=200)
         plt.close()

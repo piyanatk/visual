@@ -7,14 +7,14 @@ import pandas as pd
 
 
 freqs, zi, xi = np.genfromtxt(
-    '/Users/piyanat/research/pdf_paper/interp_delta_21cm_f_z_xi.csv',
+    '/Users/piyanat/Google/research/hera1p/interp_delta_21cm_f_z_xi.csv',
     delimiter=',', unpack=True
 )
 
 if __name__ == '__main__':
     # Data parameters
-    stats_dir = '/Users/piyanat/research/pdf_paper/new_stats/'
-    df = pd.read_hdf(stats_dir + 'model_interp_l128_stats_df.h5')
+    stats_dir = '/Users/piyanat/Google/research/hera1p/model_stats'
+    df = pd.read_hdf('{:s}/model_interp_hpx_stats_df.h5'.format(stats_dir))
 
     # Init figure
     fig = plt.figure()
@@ -26,7 +26,7 @@ if __name__ == '__main__':
     df.plot(x='freqs', y=['var', 'skew', 'kurt'], style=['k--', 'k-.', 'k:'],
             ax=ax, legend=False, linewidth=2)
     ax.set_xlim(freqs[0], freqs[-1])
-    axt.plot(zi, xi, ls='-', c='0.5', linewidth=2)
+    axt.plot(zi, xi, ls='-', c='black', linewidth=2)
     axt.set_xlim(zi[0], zi[-1])
 
     ax.spines['right'].set_visible(False)
@@ -43,10 +43,10 @@ if __name__ == '__main__':
     axt.yaxis.set_ticks_position('right')
     axt.yaxis.set_label_position('right')
     # axt.spines['top'].set_color('0.5')
-    axt.spines['right'].set_color('0.5')
+    # axt.spines['right'].set_color('0.5')
     # axt.tick_params(axis='x', which='both', colors='0.5')
-    axt_sub.tick_params(axis='y', which='both', colors='0.5')
-    axt_sub.yaxis.label.set_color('0.5')
+    # axt_sub.tick_params(axis='y', which='both', colors='0.5')
+    # axt_sub.yaxis.label.set_color('0.5')
     # axt.xaxis.label.set_color('0.5')
     axt.minorticks_on()
 
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     # Legend
     handlers = [
-        Line2D([], [], linestyle='-', color='0.5', linewidth=2),
+        Line2D([], [], linestyle='-', color='black', linewidth=2),
         Line2D([], [], linestyle='--', color='black', linewidth=2),
         Line2D([], [], linestyle='-.', color='black', linewidth=2),
         Line2D([], [], linestyle=':', color='black', linewidth=2),
@@ -72,4 +72,4 @@ if __name__ == '__main__':
     plt.tight_layout()
     fig.canvas.draw()
     # plt.grid('on')
-    fig.savefig(stats_dir + 'model_stats.pdf', dpi=200)
+    fig.savefig('healpix_model_stats.pdf')

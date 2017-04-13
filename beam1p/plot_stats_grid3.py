@@ -22,8 +22,9 @@ def get_data(infile, stat):
 
 if __name__ == '__main__':
     # Figure parameters
-    figsize = (15, 9.5)
-    frequencies = ['145.115', '178.555']
+    figsize = (15, 6)
+    # frequencies = ['145.115', '178.555']
+    frequencies = ['145.115']
     telescopes = ['hera37', 'hera61', 'hera91', 'hera127',
                   'hera169', 'hera217', 'hera271', 'hera331']
     telescopes = ['hera37', 'hera91', 'hera127', 'hera217', 'hera331']
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     nrows = len(frequencies)
     ncols = len(telescopes)
     # Read files
-    mapsdir = '/Users/piyanat/Google/research/pdf_paper/maps'
+    mapsdir = '/Users/piyanat/research/project/instrument_systematic_on_1pt_stats/maps'
     mapfiles = np.array(
         ['{:s}/{:s}_gauss_0.000h_bw3.00MHz_{:s}MHz.fits'
          .format(mapsdir, t, f) for f in frequencies for t in telescopes]
@@ -44,7 +45,7 @@ if __name__ == '__main__':
     mapfiles.shape = (nrows, ncols)
     maskfiles.shape = (nrows, ncols)
     # Stat files
-    statsdir = '/Users/piyanat/Google/research/pdf_paper/new_stats'
+    statsdir = '/Users/piyanat/research/project/instrument_systematic_on_1pt_stats/new_stats'
     df_files_window = np.array(
         ['{:s}/{:s}_gauss_stats_df_bw3.00MHz_windowing.h5'
          .format(statsdir, tel) for tel in telescopes]
@@ -75,21 +76,21 @@ if __name__ == '__main__':
     # Plot stats
     for j in range(ncols):
         ax[0, j] = fig.add_subplot(gs1[j])
-        x1, y1, y1err_min, y1err_max = get_data(df_files_window[j], 'kurt')
+        # x1, y1, y1err_min, y1err_max = get_data(df_files_window[j], 'kurt')
         x2, y2, y2err_min, y2err_max = get_data(df_files_bin[j], 'kurt')
-        ax[0, j].fill_between(x1, y1err_min, y1err_max, color='0.7')
+        # ax[0, j].fill_between(x1, y1err_min, y1err_max, color='0.7')
         ax[0, j].fill_between(x2, y2err_min, y2err_max, color='0.55')
-        ax[0, j].plot(x1, y1, 'k--', linewidth=1)
+        # ax[0, j].plot(x1, y1, 'k--', linewidth=1)
         ax[0, j].plot(x2, y2, 'k-', linewidth=1)
-        ax[0, j].set_xlim(x1[0], x1[-1])
+        ax[0, j].set_xlim(140, 195)
         ax[0, j].set_ylim(-1, 2)
-        ax[0, j].xaxis.set_major_locator(MaxNLocator(6, prune='both'))
+        ax[0, j].xaxis.set_major_locator(MaxNLocator(6, prune='upper'))
         ax[0, j].grid()
         if j != 0:
             ax[0, j].yaxis.set_ticklabels([])
 
     # Plot images
-    for i in range(1, 3):
+    for i in range(1, nrows+1):
         for j in range(ncols):
             ax[i, j] = fig.add_subplot(gs2[i-1, j], projection=wcs)
             im = ax[i, j].imshow(fits.getdata(mapfiles[i-1, j]),
@@ -98,12 +99,12 @@ if __name__ == '__main__':
                              levels=[0], colors='black')
             ax[i, j].set_xlim(*lim)
             ax[i, j].set_ylim(*lim)
-            if i == 1:
-                ax[i, j].coords[0].set_ticklabel_visible(False)
+            # if i == 1:
+            #     ax[i, j].coords[0].set_ticklabel_visible(False)
             if j != 0:
                 ax[i, j].coords[1].set_ticklabel_visible(False)
-            if i == nrows:
-                ax[i, j].set_xlabel(telescopes[j].upper())
+            # if i == nrows:
+            #     ax[i, j].set_xlabel(telescopes[j].upper())
             if j == 0:
                 ax[i, j].set_ylabel(frequencies[i-1] + ' MHz')
             c = Circle((6, -32), reso[i-1, j], edgecolor='black',
@@ -111,16 +112,17 @@ if __name__ == '__main__':
                        transform=ax[i, j].get_transform('fk5'))
             ax[i, j].add_patch(c)
 
-    gs0.tight_layout(fig, rect=[0.025, 0.05, 0.95, 0.97])
-    gs0.update(hspace=0.1)
+    # gs0.tight_layout(fig, rect=[0.025, 0.05, 0.95, 0.97])
+    gs0.tight_layout(fig, rect=[0.01, 0.0, 0.95, 1])
+    gs0.update(hspace=0.05)
 
     # fig.suptitle('3 MHz Bin Maps')
-    fig.text(0.46, 0.01, 'Right Ascension [deg]')
-    fig.text(0.46, 0.63, 'Frequency [MHz]')
-    fig.text(0.005, 0.4, 'Declination [deg]', rotation='vertical')
-    fig.text(0.005, 0.87, 'Kurtosis ($S_4$)', rotation='vertical')
+    # fig.text(0.46, 0.01, 'Right Ascension [deg]')
+    # fig.text(0.46, 0.63, 'Frequency [MHz]')
+    # fig.text(0.005, 0.4, 'Declination [deg]', rotation='vertical')
+    # fig.text(0.005, 0.87, 'Kurtosis ($S_4$)', rotation='vertical')
 
-    cbar_ax = fig.add_axes([0.94, 0.1, 0.01, 0.5])
+    cbar_ax = fig.add_axes([0.94, 0.115, 0.01, 0.43])
     cbar = fig.colorbar(im, cax=cbar_ax, orientation='vertical')
     cbar.set_label('Brightness Temperature [mK]')
 
@@ -130,8 +132,13 @@ if __name__ == '__main__':
         Patch(color='0.7'),
         Patch(color='0.55')
     ]
-    labels = ['Windowing', 'Binning', 'Error (Windowing)', 'Error (Binning)']
-    fig.legend(handles=handlers, labels=labels,
-               loc='upper center', ncol=4)
+    ax[0, 0].set_ylabel('Kurtosis')
+    ax[0, 2].set_xlabel('Frequency [MHz]')
+    ax[1, 0].set_ylabel('Declination [deg]')
+    ax[1, 2].set_xlabel('Right Ascension [deg]')
+    # labels = ['Windowing', 'Binning', 'Error (Windowing)', 'Error (Binning)']
+    # fig.legend(handles=handlers, labels=labels,
+    #            loc='upper center', ncol=4)
     # plt.show()
-    fig.savefig(statsdir + '/heraXX_kurt_maps_bin3MHz.pdf')
+    # fig.savefig(statsdir + '/heraXX_kurt_maps_bin3MHz.pdf')
+    fig.savefig('heraXX_kurt_maps_bin3MHz_jobapp.pdf')

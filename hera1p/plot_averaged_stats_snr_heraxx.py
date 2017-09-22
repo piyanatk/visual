@@ -24,6 +24,7 @@ linestyles = [(15, (20, 1, 1, 1, 1, 1, 1, 1, 1, 1)), (10, (15, 1, 1, 1, 1, 1, 1,
 m = ['None', 'None', 'None', 'x', '*', 'o', 's', '^', 'D']
 # colors = ['#67000d', '#a50026', '#d73027', '#f46d43', '#fdae61']  # Red
 colors = ['#abd9e9', '#74add1', '#4575b4', '#313695', '#08306b']  # Blue
+# colors = ['0.4', '0.3', '0.2', '0.1', '0.0']
 ylabels1 = ['Variance', 'Skewness', 'Kurtosis']
 # ylabel1 = ['$S_2$', '$S_3$', '$S_4$']
 # ylabel2 = [r'$\frac{|S_2|}{\sigma_{n,S_2}}$',

@@ -69,8 +69,18 @@ for k in range(ntelescope):
                               color=color[l])
                 if i > 0:
                     ax[i, p].axhline(0, c='k', ls='--', lw=1)
-                # ax[i, p].set_ylim(*ylims[i])
-    ax[0, 0].set_xlim(fi[0], fi[-1])
+                ax[i, p].set_xlim(fi[0], fi[-1])
+                # if s == 'skew':
+                #     ax[i, p].set_ylim(-0.7, -0.3)
+                    # fl, fb = fig.transFigure.inverted().transform(
+                    #     ax[i, p].transData.transform([140, 0.1]))
+                    # fr, ft = fig.transFigure.inverted().transform(
+                    #     ax[i, p].transData.transform([180, 1.6]))
+                    # sax = fig.add_axes([fl, fb, fr-fl, ft-fb])
+                    # sax.set_xticklabels([])
+                    # sax.set_yticklabels([])
+                # if s == 'kurt':
+                #     ax[i, p].set_ylim(0, 1)
 
     axt_xticklabels = np.arange(3, 10) * 0.1
     axt_xticklocs = np.interp(axt_xticklabels, xi, fi)

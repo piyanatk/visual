@@ -69,6 +69,8 @@ for i in range(npages):
         .format(bandwidth)
     if not os.path.exists(outdir):
         os.makedirs(outdir)
-    fig.savefig('{:s}/mc_stats_heraxx_kurt_bw{:.2f}_field{:03d}-{:03d}.pdf'
-                .format(outdir, bandwidth, fields[0], fields[-1]))
+    fig.savefig(
+        '{:s}/mc_stats_heraxx_kurt_bw{:.2f}_windowing_field{:03d}-{:03d}.pdf'
+        .format(outdir, bandwidth, fields[0], fields[-1])
+    )
     # plt.show()
